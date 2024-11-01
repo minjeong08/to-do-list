@@ -19,10 +19,33 @@ public class User {
 
     private String password;
 
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Category> categories = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Task> tasks = new ArrayList<>();
+
+    public void addCategory(Category category) {
+        categories.add(category);
+        if (category.getUser() != this) {
+            category.setUser(this);
+        }
+    }
+
+    public void removeCategory(Category category) {
+        categories.remove(category);
+        category.setUser(null);
+    }
+
+    public void addTask(Task task) {
+        tasks.add(task);
+        if (task.getUser() != this) {
+            task.setUser(this);
+        }
+    }
+
+    public void removeTask(Task task) {
+        tasks.remove(task);
+        task.setUser(null);
+    }
 }

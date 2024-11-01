@@ -32,4 +32,18 @@ public class Task {
 
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    public void setUser(User user) {
+        this.user = user;
+        if (user != null && !user.getTasks().contains(this)) {
+            user.getTasks().add(this);
+        }
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+        if (category != null && !category.getTasks().contains(this)) {
+            category.getTasks().add(this);
+        }
+    }
 }
