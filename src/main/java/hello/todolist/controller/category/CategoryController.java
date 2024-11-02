@@ -29,7 +29,7 @@ public class CategoryController {
         List<Category> categories = userService.getCategories(session.getAttribute("loginUser").toString());
 
         model.addAttribute("categories", categories);
-        return "category/createCategory";
+        return "category/category";
     }
 
     @PostMapping("/new")

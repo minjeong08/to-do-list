@@ -32,8 +32,8 @@ public class CategoryService {
     }
 
 
-    public Category getCategory(String cateName) {
-        return categoryRepository.findByCateName(cateName);
+    public Category findCategoryById(Long cateId) {
+        return categoryRepository.findById(cateId).get();
     }
 
     @Transactional
