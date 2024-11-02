@@ -1,16 +1,20 @@
 package hello.todolist.controller.category;
 
-import hello.todolist.controller.task.AddTaskForm;
 import hello.todolist.domain.Category;
 import hello.todolist.domain.User;
 import hello.todolist.service.CategoryService;
 import hello.todolist.service.UserService;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -20,54 +24,78 @@ public class CategoryController {
     private final CategoryService categoryService;
     private final UserService userService;
 
-    @GetMapping("/new")
-    public String createCategoryForm(@ModelAttribute("categoryForm") CategoryForm form) {
-        return "category";
+    @GetMapping
+    public String categoryInfo(Model model, HttpSession session) {
+        List<Category> categories = userService.getCategories(session.getAttribute("loginUser").toString());
+
+        model.addAttribute("categories", categories);
+        return "category/createCategory";
     }
 
     @PostMapping("/new")
-    public String createCategory(@Valid @ModelAttribute CategoryForm form, BindingResult result, HttpSession session) {
-        String cateName = form.getCateName();
-        String loginId = session.getAttribute("loginUser").toString();
-        categoryService.createCategory(cateName, loginId);
-        return "redirect:/";
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> createCategory(@RequestBody Map<String, String> request, HttpSession session) {
+        String cateName = request.get("cateName");
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            categoryService.createCategory(cateName, session.getAttribute("loginUser").toString());
+            response.put("success", true);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("success", false);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 
-    @PostMapping("/{cateName}/update")
-    public String updateCateName(@PathVariable("cateName") String cateName, @Valid @ModelAttribute CategoryForm form,
-                                 BindingResult result, HttpSession session) {
-        Category findCategory = categoryService.getCategory(cateName);
+    @PutMapping("/update/{cateId}")
+    public ResponseEntity<Map<String, Object>> updateCateName(@PathVariable Long cateId, @RequestBody Map<String, String> request, HttpSession session) {
+        String newCateName = request.get("cateName");
+        Map<String, Object> response = new HashMap<>();
 
-        if (result.hasErrors()) {
-            return "/tasks";
+        if (newCateName == null || newCateName.isEmpty()) {
+            response.put("success", false);
+            response.put("message", "카테고리 이름이 유효하지 않습니다.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
-        if (getLoginUser(session) != findCategory.getUser()) {
-            throw new IllegalStateException("잘못된 접근입니다.");
+        Category findCategory = categoryService.findCategoryById(cateId);
+
+        if (!getLoginUser(session).equals(findCategory.getUser())) {
+            response.put("success", false);
+            response.put("message", "카테고리를 삭제할 권한이 없습니다");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
 
-        categoryService.updateCateName(findCategory, form.getCateName());
-        return "redirect:/task";
+        categoryService.updateCateName(findCategory, newCateName);
+        response.put("success", true);
+        response.put("message", "카테고리를 삭제 성공");
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/{cateName}/delete")
-    public String deleteCategory(@PathVariable("cateName") String cateName, BindingResult result, HttpSession session) {
-        Category findCategory = categoryService.getCategory(cateName);
+    @PostMapping("/delete/{cateId}")
+    public ResponseEntity<Map<String, Object>> deleteCategory(@PathVariable Long cateId, HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
+        Category findCategory = categoryService.findCategoryById(cateId);
 
-        if (result.hasErrors()) {
-            return "/tasks";
-        }
-
-        if (getLoginUser(session) != findCategory.getUser()) {
-            throw new IllegalStateException("잘못된 접근입니다.");
+        if (!getLoginUser(session).equals(findCategory.getUser())) {
+            response.put("success", false);
+            response.put("message", "카테고리를 삭제할 권한이 없습니다");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
 
         categoryService.deleteCategory(findCategory);
-        return "redirect:/tasks";
+        response.put("success", true);
+        response.put("message", "카테고리를 삭제 성공");
+        return ResponseEntity.ok(response);
     }
 
     private User getLoginUser(HttpSession session) {
-        String loginId = session.getAttribute("loginUser").toString();
+        String loginId = (String) session.getAttribute("loginUser");
+
+        if (loginId == null) {
+            throw new RuntimeException("로그인이 필요합니다.");
+        }
 
         return userService.findUserByLoginId(loginId);
     }
