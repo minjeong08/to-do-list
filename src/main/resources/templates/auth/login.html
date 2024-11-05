@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="fragments/head :: head('로그인', ~{::customStyle})">
-
-    <style th:fragment="customStyle">
-    </style>
+<head th:replace="~{ fragments/head :: common_header(~{::title})}">
+    <title>로그인</title>
 </head>
 <body>
     <div th:replace="fragments/navbar :: navbar" />

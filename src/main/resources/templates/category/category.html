@@ -1,13 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: head(~{::title}, ~{::customStyle})">
+<head th:replace="~{ fragments/head :: common_header(~{::title})}">
     <title>카테고리 관리</title>
-
-    <Style th:block th:fragment="customStyle">
-        .container {
-            margin-top: 20px;
-        }
-    </Style>
 </head>
 
 <body>
