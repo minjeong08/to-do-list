@@ -28,6 +28,7 @@ public class CategoryService {
         Category cate = new Category();
         cate.setCateName(cateName);
         cate.setUser(loginUser.get());
+        cate.getUser().addCategory(cate);
         categoryRepository.save(cate);
     }
 
@@ -42,6 +43,7 @@ public class CategoryService {
     }
 
     public void deleteCategory(Category cate) {
+        cate.getUser().removeCategory(cate);
         categoryRepository.delete(cate);
     }
 }
