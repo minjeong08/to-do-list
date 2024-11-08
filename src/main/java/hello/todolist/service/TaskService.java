@@ -1,9 +1,8 @@
 package hello.todolist.service;
 
 import hello.todolist.controller.task.TaskDto;
-import hello.todolist.domain.Status;
-import hello.todolist.domain.Task;
-import hello.todolist.domain.User;
+import hello.todolist.domain.*;
+import hello.todolist.repository.CategoryRepository;
 import hello.todolist.repository.TaskRepository;
 import hello.todolist.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +18,19 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
 
     public void createTask(TaskDto taskDto) {
 
         Task task = new Task();
         task.setUser(taskDto.getUser());
-        task.setCategory(taskDto.getCategory());
+        task.getUser().addTask(task);
+
+        String cateName = taskDto.getCategoryName();
+        Category category = categoryRepository.findByCateName(cateName);
+        task.setCategory(category);
+        category.addTask(task);
+
         task.setTitle(taskDto.getTitle());
         task.setDescription(taskDto.getDescription());
         task.setDueDate(taskDto.getDueDate());
@@ -53,7 +59,14 @@ public class TaskService {
     public void updateTask(Long taskId, TaskDto taskDto) {
         Task findTask = taskRepository.findById(taskId).get();
 
-        findTask.setCategory(taskDto.getCategory());
+        String cateName = taskDto.getCategoryName();
+        Category category = categoryRepository.findByCateName(cateName);
+
+        if (!findTask.getCategory().getCateName().equals(cateName)) {
+            findTask.getCategory().removeTask(findTask);
+        }
+        findTask.setCategory(category);
+
         findTask.setTitle(taskDto.getTitle());
         findTask.setDescription(taskDto.getDescription());
         findTask.setDueDate(taskDto.getDueDate());
@@ -61,7 +74,22 @@ public class TaskService {
         findTask.setStatus(taskDto.getStatus());
     }
 
+    @Transactional
+    public void updatePriority(Task task, Priority priority) {
+        task.setPriority(priority);
+    }
+
     public void deleteTask(Long taskId) {
+        Optional<Task> findTask = taskRepository.findById(taskId);
+
+        if (findTask.isPresent()) {
+            Task task = findTask.get();
+            task.getUser().removeTask(task);
+            task.getCategory().removeTask(task);
+            task.setUser(null);
+            task.setCategory(null);
+        }
+
         taskRepository.deleteById(taskId);
     }
 }
