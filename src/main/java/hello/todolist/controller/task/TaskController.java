@@ -42,7 +42,7 @@ public class TaskController {
         }
 
         String loginId = getLoginId(session);
-        List<Task> all = userService.getTasks(loginId);
+        List<Task> all = taskService.getSortedTaskList(loginId);
         model.addAttribute("all", all);
 
         User user = getLoginUser(session);

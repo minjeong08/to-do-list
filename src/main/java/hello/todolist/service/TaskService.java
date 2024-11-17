@@ -43,7 +43,7 @@ public class TaskService {
         return taskRepository.findById(id);
     }
 
-    public List<Task> getTaskList(String loginId) {
+    public List<Task> getSortedTaskList(String loginId) {
         Optional<User> user  = userRepository.findByLoginId(loginId);
 
         if (user.isEmpty()) {
@@ -52,7 +52,7 @@ public class TaskService {
 
         Long userId = user.get().getId();
 
-        return taskRepository.findAllById(userId);
+        return taskRepository.findAllSortedByPriority(userId);
     }
 
     @Transactional

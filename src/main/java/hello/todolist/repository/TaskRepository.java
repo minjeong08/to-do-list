@@ -2,9 +2,12 @@ package hello.todolist.repository;
 
 import hello.todolist.domain.Task;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
 public interface TaskRepository extends JpaRepository<Task, Long> {
-    List<Task> findAllById(Long id);
+    @Query("SELECT t FROM Task t WHERE t.user.id = :id ORDER BY t.priority DESC")
+    List<Task> findAllSortedByPriority(@Param("id") Long id);
 }
