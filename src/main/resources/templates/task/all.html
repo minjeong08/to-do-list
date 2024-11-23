@@ -32,87 +32,93 @@
     <div class="alert alert-primary" role="alert" th:if="${success}">
         등록 성공!
     </div>
-    <button type="button" class="btn btn-outline-primary"><a href="/tasks/new" class="button">등록</a></button>
 
-    <ul class="nav nav-tabs" id="categoryTab" role="tablist">
-        <li class="nav-item">
-            <a class="nav-link active" id="tab-all" data-bs-toggle="tab" href="#content-all" role="tab">전체</a>
-        </li>
-        <li class="nav-item" th:each="category : ${categories}">
-            <a class="nav-link"
-               id="tab-${category.cateName}" data-bs-toggle="tab"
-               th:href="'#content-' + ${category.cateName}" role="tab"
-               th:text="${category.cateName}"></a>
-        </li>
-    </ul>
+    <div>
+        <ul class="nav nav-tabs" id="categoryTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="tab-all" data-bs-toggle="tab" href="#content-all" role="tab">전체</a>
+            </li>
+            <li class="nav-item" th:each="category : ${categories}">
+                <a class="nav-link"
+                   id="tab-${category.cateName}" data-bs-toggle="tab"
+                   th:href="'#content-' + ${category.cateName}" role="tab"
+                   th:text="${category.cateName}"></a>
+            </li>
+        </ul>
 
-    <div class="tab-content mt-3" id="categoryTabContent">
-        <div class="tab-pane fade show active" role="tabpanel" id="content-all">
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th>제목</th>
-                    <th>마감일</th>
-                    <th>상태</th>
-                    <th>중요</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="task : ${all}">
-                    <td>
-                        <a th:href="@{http://localhost:8080/tasks/{taskId}(taskId=${task.id})}"
-                           th:text="${task.title}">타이틀</a>
-                    </td>
-                    <td th:text="${task.dueDate}">마감일</td>
-                    <td>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" th:checked="${task.status}"
-                                   th:id="${status == T(hello.todolist.domain.Status).PENDING ? 'flexCheckDefault' : 'flexCheckChecked'}">
-                        </div>
-                    </td>
-                    <td>
-                        <i class="fa-star star-icon" onclick="toggleImportance(this)" th:data-task-id="${task.id}" th:data-task-priority="${task.priority}"
-                           th:classappend="${task.priority == T(hello.todolist.domain.Priority).STARRED ? 'fas active' : 'far'}"></i>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+        <div class="tab-content mt-3" id="categoryTabContent">
+            <div class="tab-pane fade show active" role="tabpanel" id="content-all">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>제목</th>
+                        <th>마감일</th>
+                        <th>상태</th>
+                        <th>중요</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="task : ${all}">
+                        <td>
+                            <a th:href="@{http://localhost:8080/tasks/{taskId}(taskId=${task.id})}"
+                               th:text="${task.title}">타이틀</a>
+                        </td>
+                        <td th:text="${task.dueDate}">마감일</td>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" th:checked="${task.status}"
+                                       th:id="${status == T(hello.todolist.domain.Status).PENDING ? 'flexCheckDefault' : 'flexCheckChecked'}">
+                            </div>
+                        </td>
+                        <td>
+                            <i class="fa-star star-icon" onclick="toggleImportance(this)" th:data-task-id="${task.id}" th:data-task-priority="${task.priority}"
+                               th:classappend="${task.priority == T(hello.todolist.domain.Priority).STARRED ? 'fas active' : 'far'}"></i>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div th:each="category : ${categories}"
+                 class="tab-pane fade" role="tabpanel"
+                 th:id="'content-' + ${category.cateName}">
+
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>제목</th>
+                        <th>마감일</th>
+                        <th>상태</th>
+                        <th>중요</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="task : ${category.tasks}">
+                        <td>
+                            <a th:href="@{http://localhost:8080/tasks/{taskId}(taskId=${task.id})}"
+                               th:text="${task.title}">타이틀</a>
+                        </td>
+                        <td th:text="${task.dueDate}">마감일</td>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" th:checked="${task.status}"
+                                       th:id="${status == T(hello.todolist.domain.Status).PENDING ? 'flexCheckDefault' : 'flexCheckChecked'}">
+                            </div>
+                        </td>
+                        <td>
+                            <i class="fa-star star-icon" onclick="toggleImportance(this)" th:data-task-id="${task.id}" th:data-task-priority="${task.priority}"
+                               th:classappend="${task.priority == T(hello.todolist.domain.Priority).STARRED ? 'fas active' : 'far'}"></i>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
+    </div>
 
-        <div th:each="category : ${categories}"
-             class="tab-pane fade" role="tabpanel"
-             th:id="'content-' + ${category.cateName}">
-
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th>제목</th>
-                    <th>마감일</th>
-                    <th>상태</th>
-                    <th>중요</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="task : ${category.tasks}">
-                    <td>
-                        <a th:href="@{http://localhost:8080/tasks/{taskId}(taskId=${task.id})}"
-                           th:text="${task.title}">타이틀</a>
-                    </td>
-                    <td th:text="${task.dueDate}">마감일</td>
-                    <td>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" th:checked="${task.status}"
-                                   th:id="${status == T(hello.todolist.domain.Status).PENDING ? 'flexCheckDefault' : 'flexCheckChecked'}">
-                        </div>
-                    </td>
-                    <td>
-                        <i class="fa-star star-icon" onclick="toggleImportance(this)" th:data-task-id="${task.id}" th:data-task-priority="${task.priority}"
-                           th:classappend="${task.priority == T(hello.todolist.domain.Priority).STARRED ? 'fas active' : 'far'}"></i>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
+    <div style="text-align: right;">
+        <button type="button" class="btn btn-primary" onclick="window.location.href='/tasks/new';">등록</button>
+        <button type="button" class="btn btn-secondary" onclick="window.location.href='/category';">카테고리 관리</button>
     </div>
 </div>
 
