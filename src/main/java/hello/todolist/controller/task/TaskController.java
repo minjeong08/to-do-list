@@ -1,9 +1,6 @@
 package hello.todolist.controller.task;
 
-import hello.todolist.domain.Category;
-import hello.todolist.domain.Priority;
-import hello.todolist.domain.Task;
-import hello.todolist.domain.User;
+import hello.todolist.domain.*;
 import hello.todolist.service.TaskService;
 import hello.todolist.service.AuthService;
 import jakarta.servlet.http.HttpSession;
@@ -123,7 +120,7 @@ public class TaskController {
         return "redirect:/tasks/{taskId}";
     }
 
-    @PutMapping("/{taskId}/update/priority")
+    @PutMapping("/{taskId}/priority")
     public ResponseEntity<Map<String, Object>> updatePriority(@PathVariable("taskId") Long taskId,
                                                               @RequestBody Map<String, String> request,
                                                               HttpSession session) {
@@ -147,6 +144,33 @@ public class TaskController {
 
         response.put("success", true);
         response.put("message", "priority 수정 성공!");
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{taskId}/status")
+    public ResponseEntity<Map<String, Object>> updateStatus(@PathVariable("taskId") Long taskId,
+                                                              @RequestBody Map<String, String> request,
+                                                              HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
+        Status status = Status.valueOf(request.get("status"));
+
+        Task findTask = taskService.getTask(taskId).get();
+        if (!getLoginUser(session).equals(findTask.getUser())) {
+            response.put("success", false);
+            response.put("message", "수정할 권한이 없습니다");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        }
+
+        if (!findTask.getStatus().equals(status)) {
+            taskService.updateStatus(findTask, status);
+        } else {
+            response.put("success", false);
+            response.put("message", "status 수정 에러 발생");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        response.put("success", true);
+        response.put("message", "status 수정 성공!");
         return ResponseEntity.ok(response);
     }
 

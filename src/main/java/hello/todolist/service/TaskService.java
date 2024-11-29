@@ -79,6 +79,11 @@ public class TaskService {
         task.setPriority(priority);
     }
 
+    @Transactional
+    public void updateStatus(Task task, Status status) {
+        task.setStatus(status);
+    }
+
     public void deleteTask(Long taskId) {
         Optional<Task> findTask = taskRepository.findById(taskId);
 
