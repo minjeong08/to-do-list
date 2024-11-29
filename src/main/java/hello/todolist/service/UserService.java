@@ -25,7 +25,7 @@ public class UserService {
         }
 
         User user = new User();
-        String hashedPassword = PasswordUtil.hasPassword(password);
+        String hashedPassword = PasswordUtil.hashPassword(password);
         user.setLoginId(loginId);
         user.setPassword(hashedPassword);
 
