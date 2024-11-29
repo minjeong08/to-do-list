@@ -25,15 +25,16 @@ public class UserService {
         }
 
         User user = new User();
+        String hashedPassword = PasswordUtil.hasPassword(password);
         user.setLoginId(loginId);
-        user.setPassword(password);
+        user.setPassword(hashedPassword);
 
         return repository.save(user);
     }
 
     public User login(String loginId, String password) {
         return repository.findByLoginId(loginId)
-                .filter(u -> u.getPassword().equals(password))
+                .filter(u -> PasswordUtil.verifyPassword(password, u.getPassword()))
                 .orElse(null);
     }
 
