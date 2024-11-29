@@ -3,7 +3,7 @@ package hello.todolist.controller.category;
 import hello.todolist.domain.Category;
 import hello.todolist.domain.User;
 import hello.todolist.service.CategoryService;
-import hello.todolist.service.UserService;
+import hello.todolist.service.AuthService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,11 +22,11 @@ import java.util.Map;
 public class CategoryController {
 
     private final CategoryService categoryService;
-    private final UserService userService;
+    private final AuthService authService;
 
     @GetMapping
     public String categoryInfo(Model model, HttpSession session) {
-        List<Category> categories = userService.getCategories(session.getAttribute("loginUser").toString());
+        List<Category> categories = authService.getCategories(session.getAttribute("loginUser").toString());
 
         model.addAttribute("categories", categories);
         return "category/category";
@@ -97,6 +97,6 @@ public class CategoryController {
             throw new RuntimeException("로그인이 필요합니다.");
         }
 
-        return userService.findUserByLoginId(loginId);
+        return authService.findUserByLoginId(loginId);
     }
 }

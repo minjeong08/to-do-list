@@ -1,7 +1,7 @@
 package hello.todolist.controller.user;
 
 import hello.todolist.domain.User;
-import hello.todolist.service.UserService;
+import hello.todolist.service.AuthService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final UserService userService;
+    private final AuthService authService;
 
     @GetMapping("/register")
     public String registerPage(Model model) {
@@ -35,7 +35,7 @@ public class AuthController {
             result.reject("passwordsNotMatch", "비밀번호 확인이 일치하지 않습니다.");
         }
 
-        userService.join(form.getLoginId(), form.getPassword());
+        authService.join(form.getLoginId(), form.getPassword());
 
         return "redirect:/login";
     }
@@ -55,7 +55,7 @@ public class AuthController {
             return "auth/login";
         }
 
-        User loginUser = userService.login(form.getLoginId(), form.getPassword());
+        User loginUser = authService.login(form.getLoginId(), form.getPassword());
 
         if (loginUser == null) {
             result.reject("loginFail", "아이디 또는 비밀번호가 맞지 않습니다");

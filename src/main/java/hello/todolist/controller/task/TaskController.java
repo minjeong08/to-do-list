@@ -5,7 +5,7 @@ import hello.todolist.domain.Priority;
 import hello.todolist.domain.Task;
 import hello.todolist.domain.User;
 import hello.todolist.service.TaskService;
-import hello.todolist.service.UserService;
+import hello.todolist.service.AuthService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ import java.util.Optional;
 @RequestMapping("/tasks")
 public class TaskController {
 
-    private final UserService userService;
+    private final AuthService authService;
     private final TaskService taskService;
 
     @GetMapping
@@ -173,11 +173,11 @@ public class TaskController {
 
     private User getLoginUser(HttpSession session) {
         String loginId = getLoginId(session);
-        return userService.findUserByLoginId(loginId);
+        return authService.findUserByLoginId(loginId);
     }
 
     private List<Category> getUserCategories(HttpSession session) {
         String loginId = getLoginId(session);
-        return userService.getCategories(loginId);
+        return authService.getCategories(loginId);
     }
 }
