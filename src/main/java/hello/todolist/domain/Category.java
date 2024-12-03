@@ -23,22 +23,20 @@ public class Category {
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks = new ArrayList<>();
 
-    public void setUser(User user) {
-        this.user = user;
-        if (user != null && !user.getCategories().contains(this)) {
-            user.getCategories().add(this);
-        }
-    }
-
     public void addTask(Task task) {
-        tasks.add(task);
-        if (task.getCategory() != this) {
-            task.setCategory(this);
+        if (task.getCategory() != null && task.getCategory() != this) {
+            throw new IllegalStateException("잘못된 접근입니다.");
         }
+        task.setCategory(this);
+        tasks.add(task);
     }
 
     public void removeTask(Task task) {
-        tasks.remove(task);
+        if (!tasks.contains(task) || task == null) {
+            throw new IllegalStateException("잘못된 접근입니다.");
+        }
+
         task.setCategory(null);
+        tasks.remove(task);
     }
 }
