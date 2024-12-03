@@ -26,7 +26,9 @@ public class CategoryController {
 
     @GetMapping
     public String categoryInfo(Model model, HttpSession session) {
-        List<Category> categories = authService.getCategories(session.getAttribute("loginUser").toString());
+        String loginId = session.getAttribute("loginUser").toString();
+        User user = authService.findUserByLoginId(loginId);
+        List<Category> categories = user.getCategories();
 
         model.addAttribute("categories", categories);
         return "category/category";

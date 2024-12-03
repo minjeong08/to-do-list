@@ -202,6 +202,7 @@ public class TaskController {
 
     private List<Category> getUserCategories(HttpSession session) {
         String loginId = getLoginId(session);
-        return authService.getCategories(loginId);
+        User user = authService.findUserByLoginId(loginId);
+        return user.getCategories();
     }
 }

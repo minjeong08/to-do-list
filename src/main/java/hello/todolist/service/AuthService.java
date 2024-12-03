@@ -1,6 +1,5 @@
 package hello.todolist.service;
 
-import hello.todolist.domain.Category;
 import hello.todolist.domain.User;
 import hello.todolist.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,9 +37,5 @@ public class AuthService {
 
     public User findUserByLoginId(String loginId) {
         return repository.findByLoginId(loginId).orElseThrow(() -> new IllegalStateException("존재하지 않는 회원입니다"));
-    }
-
-    public List<Category> getCategories(String loginId) {
-        return repository.findByLoginId(loginId).get().getCategories();
     }
 }
