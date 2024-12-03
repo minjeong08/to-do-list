@@ -57,9 +57,7 @@ public class User {
         }
 
         tasks.add(task);
-        if (task.getUser() != this) {
-            task.setUser(this);
-        }
+        task.setUser(this);
     }
 
     public void removeTask(Task task) {
