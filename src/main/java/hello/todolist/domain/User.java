@@ -31,14 +31,16 @@ public class User {
             throw new IllegalStateException("카테고리 생성자와 일치하지 않습니다");
         }
 
+        if (categories.contains(category)) {
+            throw new IllegalStateException("이미 등록처리되었습니다.");
+        }
+
         if (categories.stream().anyMatch(c -> c.getCateName().equals(category.getCateName()))) {
             throw new IllegalArgumentException("이미 존재하는 카테고리 이름입니다.");
         }
 
+        category.setUser(this);
         categories.add(category);
-        if (category.getUser() != this) {
-            category.setUser(this);
-        }
     }
 
     public void removeCategory(Category category) {
@@ -47,8 +49,8 @@ public class User {
             throw new IllegalStateException("존재하지 않는 카테고리입니다.");
         }
 
-        categories.remove(category);
         category.setUser(null);
+        categories.remove(category);
     }
 
     public void addTask(Task task) {
@@ -56,8 +58,8 @@ public class User {
             throw new IllegalStateException("잘못된 접근입니다.");
         }
 
-        tasks.add(task);
         task.setUser(this);
+        tasks.add(task);
     }
 
     public void removeTask(Task task) {
@@ -65,7 +67,7 @@ public class User {
             throw new IllegalStateException("잘못된 접근입니다.");
         }
 
-        tasks.remove(task);
         task.setUser(null);
+        tasks.remove(task);
     }
 }

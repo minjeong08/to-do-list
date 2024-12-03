@@ -1,29 +1,17 @@
 package hello.todolist.domain;
 
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
-@Transactional
 class UserTest {
-
-    @Autowired EntityManager em;
 
     @Test
     void 카테고리_추가_성공() {
         // given
         User user = new User();
         Category category = new Category();
-        category.setCateName("test");
 
         // when
         user.addCategory(category);
@@ -40,7 +28,7 @@ class UserTest {
         User user2 = new User();
 
         Category category = new Category();
-        category.setUser(user2);
+        user2.addCategory(category);
 
         // when, then
         assertThatThrownBy(() -> user1.addCategory(category))
@@ -49,7 +37,7 @@ class UserTest {
     }
 
     @Test
-    void 중복_카테고리_추가() {
+    void 중복되는_카테고리_이름_추가() {
         // given
         User user = new User();
 
@@ -112,11 +100,7 @@ class UserTest {
     void 할일_추가_성공() {
         // given
         User user = new User();
-        Category category = new Category();
         Task task = new Task();
-
-        task.setUser(user);
-        task.setCategory(category);
 
         // when
         user.addTask(task);
@@ -124,7 +108,6 @@ class UserTest {
         // then
         assertThat(user.tasks).contains(task);
         assertThat(task.getUser()).isEqualTo(user);
-        assertThat(task.getCategory()).isEqualTo(category);
     }
 
     @Test
@@ -132,11 +115,9 @@ class UserTest {
         // given
         User user1 = new User();
         User user2 = new User();
-        Category category = new Category();
         Task task = new Task();
 
-        task.setCategory(category);
-        task.setUser(user2);
+        user2.addTask(task);
 
         // when & then
         assertThatThrownBy(() -> user1.addTask(task))
