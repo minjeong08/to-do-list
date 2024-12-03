@@ -34,16 +34,18 @@ public class Task {
     private Status status;
 
     public void setUser(User user) {
-        this.user = user;
-        if (user != null && !user.getTasks().contains(this)) {
-            user.getTasks().add(this);
+        if (user != null && user.getTasks().contains(this)) {
+            throw new IllegalStateException("이미 등록된 todo 입니다");
         }
+
+        this.user = user;
     }
 
     public void setCategory(Category category) {
-        this.category = category;
-        if (category != null && !category.getTasks().contains(this)) {
-            category.getTasks().add(this);
+        if (category != null && category.getTasks().contains(this)) {
+            throw new IllegalStateException("이미 등록된 todo 입니다");
         }
+
+        this.category = category;
     }
 }
