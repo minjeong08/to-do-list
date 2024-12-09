@@ -23,20 +23,22 @@ public class TaskService {
     public void createTask(TaskDto taskDto) {
 
         Task task = new Task();
+
         task.setUser(taskDto.getUser());
-        task.getUser().addTask(task);
 
         String cateName = taskDto.getCategoryName();
         Category category = categoryRepository.findByCateName(cateName);
         task.setCategory(category);
-        category.addTask(task);
 
         task.setTitle(taskDto.getTitle());
         task.setDescription(taskDto.getDescription());
         task.setDueDate(taskDto.getDueDate());
         task.setPriority(taskDto.getPriority());
         task.setStatus(Status.PENDING);
+
         taskRepository.save(task);
+        category.addTask(task);
+        task.getUser().addTask(task);
     }
 
     public Optional<Task> getTask(Long id) {
@@ -61,11 +63,10 @@ public class TaskService {
 
         String cateName = taskDto.getCategoryName();
         Category category = categoryRepository.findByCateName(cateName);
-
         if (!findTask.getCategory().getCateName().equals(cateName)) {
             findTask.getCategory().removeTask(findTask);
+            findTask.setCategory(category);
         }
-        findTask.setCategory(category);
 
         findTask.setTitle(taskDto.getTitle());
         findTask.setDescription(taskDto.getDescription());

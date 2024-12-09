@@ -100,14 +100,6 @@ public class TaskController {
                              RedirectAttributes redirectAttributes) {
 
         if (result.hasErrors()) {
-            for (ObjectError error : result.getAllErrors()) {
-                System.out.println("Error: " + error.getDefaultMessage());
-            }
-
-            for (FieldError fieldError : result.getFieldErrors()) {
-                System.out.println("Field: " + fieldError.getField());
-                System.out.println("Error: " + fieldError.getDefaultMessage());
-            }
             return "redirect:/tasks/{taskId}";
         }
 
